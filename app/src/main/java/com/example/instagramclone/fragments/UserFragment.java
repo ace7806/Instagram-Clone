@@ -47,21 +47,25 @@ public class UserFragment extends Fragment {
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUser.logOutInBackground(new LogOutCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e!=null){
-                            Log.e(TAG, "done: couldnt log out: ",e);
-                            Toast.makeText(getContext(),"Error: couldn't sign out",Toast.LENGTH_SHORT).show();
-                        }
-                        Log.i(TAG, "done: logged out");
-                        Toast.makeText(getContext(),"Logged out",Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(getContext(),LoginActivity.class);
-                        startActivity(i);
-                        getActivity().finish();
+                logOut();
+            }
+        });
+    }
 
-                    }
-                });
+    private void logOut(){
+        ParseUser.logOutInBackground(new LogOutCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e!=null){
+                    Log.e(TAG, "done: couldnt log out: ",e);
+                    Toast.makeText(getContext(),"Error: couldn't sign out",Toast.LENGTH_SHORT).show();
+                }
+                Log.i(TAG, "done: logged out");
+                Toast.makeText(getContext(),"Logged out",Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getContext(),LoginActivity.class);
+                startActivity(i);
+                getActivity().finish();
+
             }
         });
     }
