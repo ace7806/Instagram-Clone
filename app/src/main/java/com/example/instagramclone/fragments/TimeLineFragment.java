@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class TimeLineFragment extends Fragment {
     public static final String TAG = "TimeLineFragment";
     protected PostsAdapter postsAdapter;
     protected List<Post> allPosts;
+    private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
     public TimeLineFragment() {
         // Required empty public constructor
@@ -51,6 +53,28 @@ public class TimeLineFragment extends Fragment {
         rvPosts.setAdapter(postsAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvPosts.setLayoutManager(linearLayoutManager);
+
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                postsAdapter.clear();
+                scrollListener.resetState();
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                queryPosts(0);
+                
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+        
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -58,6 +82,7 @@ public class TimeLineFragment extends Fragment {
                 Log.i(TAG, "onLoadMore: success");
             }
         };
+        
         queryPosts(0);
         // Adds the scroll listener to RecyclerView
         rvPosts.addOnScrollListener(scrollListener);
@@ -90,6 +115,7 @@ public class TimeLineFragment extends Fragment {
                 }
                 allPosts.addAll(posts);
                 postsAdapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
             }
         });
     }
