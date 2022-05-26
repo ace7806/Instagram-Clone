@@ -1,4 +1,4 @@
-# Project 3 - *Parsetagram*
+# Project 3 - *Instagram clone app*
 
 
 
